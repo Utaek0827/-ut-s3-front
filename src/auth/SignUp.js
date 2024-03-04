@@ -12,6 +12,9 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import axios from 'axios';
+import { useState } from "react";
+
 
 function Copyright(props) {
   return (
@@ -31,13 +34,40 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignUp() {
+
+    const [inputText, setInputText] = useState({
+        email: '',
+        password: '',
+        telNumber: '',
+        privacyCheck: false // 기본값으로 false 설정
+      });
+    
+      const { email, password, telNumber, privacyCheck} = inputText;
+    
+      const onChange = (e) => {
+        const { value, name, checked } = e.target;
+        setInputText({
+          ...inputText,
+          [name]: name === "privacyCheck" ? checked : value // privacyCheck는 boolean으로 설정
+        });
+      };
+
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    axios.post('/auth/SignUp', {
+        email: email,
+        password: password,
+        telNumber: telNumber,
+        privacyCheck: privacyCheck // boolean 값 그대로 전달
+    }).then(function (response) {
+        console.log(response.data);
+        // 로그인 성공 시 다음 동작을 수행할 수 있습니다.
+      }).catch(function (error) {
+        console.log(error);
+        // 로그인 실패 시 다음 동작을 수행할 수 있습니다.
+      });
+
   };
 
   return (
@@ -60,27 +90,7 @@ export default function SignUp() {
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
-                  fullWidth
-                  id="firstName"
-                  label="First Name"
-                  autoFocus
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
-                />
-              </Grid>
+              
               <Grid item xs={12}>
                 <TextField
                   required
@@ -89,6 +99,8 @@ export default function SignUp() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  onChange={onChange}
+
                 />
               </Grid>
               <Grid item xs={12}>
@@ -100,12 +112,28 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  onChange={onChange}
+
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="telNumber"
+                  label="telNumber"
+                  id="telNumber"
+                  autoComplete="telNumber"
+                  onChange={onChange}
+
                 />
               </Grid>
               <Grid item xs={12}>
                 <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
+                  control={<Checkbox name="privacyCheck" color="primary" />}
+                  label="동의체크하셈"
+                  onChange={onChange}
+
                 />
               </Grid>
             </Grid>

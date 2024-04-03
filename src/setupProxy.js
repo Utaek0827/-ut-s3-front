@@ -17,7 +17,18 @@ module.exports = function (app) {
       // target: 'https://utapi.duckdns.org',
 
       // target: 'http://uutt77.duckdns.org:10030',
-      target: 'http://localhost:8080/api/v1',
+      target: 'http://localhost:8081/api/v1',
+
+      changeOrigin: true,
+    }),
+  );
+
+  app.use('/users',
+    createProxyMiddleware({
+      // target: 'https://utapi.duckdns.org',
+
+      // target: 'http://uutt77.duckdns.org:10030',
+      target: 'http://localhost:8081/api/v1',
 
       changeOrigin: true,
     }),

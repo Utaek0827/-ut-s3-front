@@ -14,9 +14,10 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
 import { useState } from "react";
-
+import { useNavigate } from 'react-router-dom';
 
 function Copyright(props) {
+
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
@@ -34,6 +35,8 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignInSide() {
+  const navigate = useNavigate(); // navigate 변수 정의
+
   const [inputText, setInputText] = useState({
     email: '',
     password: ''
@@ -55,10 +58,25 @@ export default function SignInSide() {
     axios.post('/auth/SignIn', { // '/auth' 뒤에 경로를 붙혀 요청을 보냄
       email: email,
       password: password,
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+        
+      }
     }).then(function (response) {
+
       console.log(response.data);
+      const token = response.headers['authorization'];
+      console.log(token)
+      localStorage.setItem('token', token);
+      
+      // eslint-disable-next-line no-restricted-globals
+      navigate('/Dashboard');
+
+
       // 로그인 성공 시 다음 동작을 수행할 수 있습니다.
     }).catch(function (error) {
+      alert("로그인 실패")
       console.log(error);
       // 로그인 실패 시 다음 동작을 수행할 수 있습니다.
     });
@@ -159,3 +177,4 @@ export default function SignInSide() {
     </ThemeProvider>
   );
 }
+

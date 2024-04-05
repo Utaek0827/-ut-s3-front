@@ -22,7 +22,12 @@ import Chart from './Chart';
 import Deposits from './Deposits';
 import Orders from './Orders';
 import axios from 'axios';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardActions from '@mui/material/CardActions';
+import Button from '@mui/material/Button';
+
 
 function Copyright(props) {
 
@@ -89,10 +94,45 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-export default function Dashboard() {
 
+
+export default function Dashboard() {
+  const [userData, setUserData] = useState(null); // 유저 데이터를 저장할 상태
+  const bull = (
+    <Box
+      component="span"
+      sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
+    >
+      •
+    </Box>
+  );
+  
+  const card = (
+    <React.Fragment>
+      <CardContent>
+        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+          Word of the Day
+        </Typography>
+        <Typography variant="h5" component="div">
+          be{bull}nev{bull}o{bull}lent
+        </Typography>
+        <Typography sx={{ mb: 1.5 }} color="text.secondary">
+          adjective
+        </Typography>
+        <Typography variant="body2">
+          well meaning and kindly.
+          <br />
+          {'"a benevolent smile"'}
+        </Typography>
+      </CardContent>
+      <CardActions>
+        <Button size="small">Learn More</Button>
+      </CardActions>
+    </React.Fragment>
+  );
 // 대시보드 페이지 또는 컴포넌트에서 데이터 요청 예시
 useEffect(() => {
+  
     const token = localStorage.getItem('token'); // 토큰 가져오기
     axios.get('/users/Dashboard', {
       headers: {
@@ -101,6 +141,8 @@ useEffect(() => {
     })
     .then(response => {
         console.log(response.data)
+        setUserData(response.data); // 받은 데이터를 상태에 저장
+
       // 데이터 처리
     })
     .catch(error => {
@@ -143,6 +185,7 @@ useEffect(() => {
               sx={{ flexGrow: 1 }}
             >
               Dashboard
+              
             </Typography>
             <IconButton color="inherit">
               <Badge badgeContent={4} color="secondary">
@@ -184,43 +227,27 @@ useEffect(() => {
           }}
         >
           <Toolbar />
+          
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <Box sx={{ Width: 275 }}>
+            <Card variant="outlined">{card}</Card>
+          </Box>
+
+          <Box sx={{ Width: 275 }}>
+            <Card variant="outlined">{card}</Card>
+          </Box>
+
+          <Box sx={{ Width: 275 }}>
+            <Card variant="outlined">{card}</Card>
+          </Box>
+
+
             <Grid container spacing={3}>
-              {/* Chart */}
-              <Grid item xs={12} md={8} lg={9}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                  <Chart />
-                </Paper>
-              </Grid>
-              {/* Recent Deposits */}
-              <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                  <Deposits />
-                </Paper>
-              </Grid>
-              {/* Recent Orders */}
-              <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  <Orders />
-                </Paper>
-              </Grid>
+              
             </Grid>
             <Copyright sx={{ pt: 4 }} />
           </Container>
+          
         </Box>
       </Box>
     </ThemeProvider>

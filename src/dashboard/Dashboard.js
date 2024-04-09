@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -17,33 +17,10 @@ import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { mainListItems, secondaryListItems } from './listItems';
-import Chart from './Chart';
-import Deposits from './Deposits';
-import Orders from './Orders';
+import ServiceInfoComponent from '../serviceInfoComponent/ServiceInfoComponent'; 
 import axios from 'axios';
-import { useState, useEffect } from 'react';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
-import Button from '@mui/material/Button';
 
-
-function Copyright(props) {
-
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
-  
+import { mainListItems, secondaryListItems } from './listItems'; // 추가
 
 const drawerWidth = 240;
 
@@ -91,66 +68,30 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-// TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
+function Dashboard() {
+  const [data, setData] = useState([]);
 
-
-export default function Dashboard() {
-  const [userData, setUserData] = useState(null); // 유저 데이터를 저장할 상태
-  const bull = (
-    <Box
-      component="span"
-      sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
-    >
-      •
-    </Box>
-  );
-  
-  const card = (
-    <React.Fragment>
-      <CardContent>
-        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          Word of the Day
-        </Typography>
-        <Typography variant="h5" component="div">
-          be{bull}nev{bull}o{bull}lent
-        </Typography>
-        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-          adjective
-        </Typography>
-        <Typography variant="body2">
-          well meaning and kindly.
-          <br />
-          {'"a benevolent smile"'}
-        </Typography>
-      </CardContent>
-      <CardActions>
-        <Button size="small">Learn More</Button>
-      </CardActions>
-    </React.Fragment>
-  );
-// 대시보드 페이지 또는 컴포넌트에서 데이터 요청 예시
-useEffect(() => {
-  
-    const token = localStorage.getItem('token'); // 토큰 가져오기
-    axios.get('/users/Dashboard', {
-      headers: {
-        'Authorization': `Bearer ${token}` // 토큰을 헤더에 포함
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('/users/Dashboard', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        setData(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
-    })
-    .then(response => {
-        console.log(response.data)
-        setUserData(response.data); // 받은 데이터를 상태에 저장
+    };
 
-      // 데이터 처리
-    })
-    .catch(error => {
-      console.log(error);
-    });
+    fetchData();
   }, []);
 
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -160,11 +101,7 @@ useEffect(() => {
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>
-          <Toolbar
-            sx={{
-              pr: '24px', // keep right padding when drawer closed
-            }}
-          >
+          <Toolbar>
             <IconButton
               edge="start"
               color="inherit"
@@ -185,7 +122,6 @@ useEffect(() => {
               sx={{ flexGrow: 1 }}
             >
               Dashboard
-              
             </Typography>
             <IconButton color="inherit">
               <Badge badgeContent={4} color="secondary">
@@ -195,24 +131,15 @@ useEffect(() => {
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
-          <Toolbar
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-              px: [1],
-            }}
-          >
+          <Toolbar>
             <IconButton onClick={toggleDrawer}>
               <ChevronLeftIcon />
             </IconButton>
           </Toolbar>
           <Divider />
-          <List component="nav">
-            {mainListItems}
-            <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
-          </List>
+          <List>{mainListItems}</List> {/* mainListItems 추가 */}
+          <Divider />
+          <List>{secondaryListItems}</List> {/* secondaryListItems 추가 */}
         </Drawer>
         <Box
           component="main"
@@ -227,29 +154,25 @@ useEffect(() => {
           }}
         >
           <Toolbar />
-          
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-          <Box sx={{ Width: 275 }}>
-            <Card variant="outlined">{card}</Card>
-          </Box>
-
-          <Box sx={{ Width: 275 }}>
-            <Card variant="outlined">{card}</Card>
-          </Box>
-
-          <Box sx={{ Width: 275 }}>
-            <Card variant="outlined">{card}</Card>
-          </Box>
-
-
+          <Container maxWidth="sm" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
-              
+              {data.map((item, index) => (
+                <Grid item xs={12} key={index}>
+                  <ServiceInfoComponent
+                    serviceName={item.serviceID}
+                    description={`Email: ${item.email}`}
+                    usedSpace={item.userUsageCap}
+                    totalSpace={item.userTotalCap}
+                    serviceKey={item.usID}
+                  />
+                </Grid>
+              ))}
             </Grid>
-            <Copyright sx={{ pt: 4 }} />
           </Container>
-          
         </Box>
       </Box>
     </ThemeProvider>
   );
 }
+
+export default Dashboard;

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
-function ServiceInfoComponent() {
+function ServiceInfoComponent(props) {
+  const { serviceName, description, usedSpace, totalSpace, serviceKey } = props;
+
   // 서비스 정보를 상태로 관리
   const [serviceInfo, setServiceInfo] = useState({
     serviceName: '',
@@ -10,17 +12,17 @@ function ServiceInfoComponent() {
     serviceKey: '',
   });
 
-  // 예시를 위한 용량 정보 업데이트
+  // props가 변경될 때마다 서비스 정보 업데이트
   useEffect(() => {
-    // 실제 사용 시에는 여기서 API 호출 등을 통해 데이터를 가져올 수 있습니다.
+    // props로 전달된 데이터를 기반으로 상태 업데이트
     setServiceInfo({
-      serviceName: '예제 서비스',
-      description: '이것은 리액트 컴포넌트 예제입니다.',
-      usedSpace: 30, // 예시: 50GB 사용 중
-      totalSpace: 100, // 예시: 총 100GB
-      serviceKey: 'abc123',
+      serviceName: serviceName,
+      description: description,
+      usedSpace: usedSpace,
+      totalSpace: totalSpace,
+      serviceKey: serviceKey,
     });
-  }, []);
+  }, [serviceName, description, usedSpace, totalSpace, serviceKey]);
 
   // 용량 사용률 계산
   const usagePercentage = (serviceInfo.usedSpace / serviceInfo.totalSpace) * 100;

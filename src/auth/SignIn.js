@@ -55,7 +55,7 @@ export default function SignInSide() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    axios.post('/auth/SignIn', { // '/auth' 뒤에 경로를 붙혀 요청을 보냄
+    axios.post('/auth/signIn', { // '/auth' 뒤에 경로를 붙혀 요청을 보냄
       email: email,
       password: password,
     }, {
@@ -71,7 +71,7 @@ export default function SignInSide() {
       localStorage.setItem('token', token);
       
       // eslint-disable-next-line no-restricted-globals
-      navigate('/Dashboard');
+      navigate('/dashboard');
 
 
       // 로그인 성공 시 다음 동작을 수행할 수 있습니다.

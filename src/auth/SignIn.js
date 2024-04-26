@@ -55,7 +55,7 @@ export default function SignInSide() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    axios.post('/auth/signIn', { // '/auth' 뒤에 경로를 붙혀 요청을 보냄
+    axios.post('/auth/signin', { // '/auth' 뒤에 경로를 붙혀 요청을 보냄
       email: email,
       password: password,
     }, {
@@ -164,7 +164,7 @@ export default function SignInSide() {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="/SignUp" variant="body2">
+                  <Link href="/signup" variant="body2">
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>

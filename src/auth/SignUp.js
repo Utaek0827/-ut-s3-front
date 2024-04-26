@@ -55,7 +55,7 @@ export default function SignUp() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    axios.post('/auth/SignUp', {
+    axios.post('/auth/signUp', {
         email: email,
         password: password,
         telNumber: telNumber,
